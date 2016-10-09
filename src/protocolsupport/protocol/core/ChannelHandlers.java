@@ -1,10 +1,14 @@
 package protocolsupport.protocol.core;
 
+import com.google.common.base.Throwables;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
+import protocolsupport.ProtocolSupport;
 import protocolsupport.protocol.core.wrapped.WrappedDecoder;
 import protocolsupport.protocol.core.wrapped.WrappedEncoder;
 import protocolsupport.protocol.core.wrapped.WrappedPrepender;
 import protocolsupport.protocol.core.wrapped.WrappedSplitter;
+import protocolsupport.utils.Utils;
 
 public class ChannelHandlers {
 
@@ -19,7 +23,16 @@ public class ChannelHandlers {
 	public static final String DECRYPT = "decrypt";
 
 	public static WrappedDecoder getDecoder(ChannelPipeline pipeline) {
-		return (WrappedDecoder) pipeline.get(DECODER);
+		ChannelHandler decoder = pipeline.get(DECODER);
+		if (ProtocolSupport.lilypad && !(decoder instanceof WrappedDecoder)) {
+			try {
+				decoder = (ChannelHandler) Utils.setAccessible(decoder.getClass().getDeclaredField("oldDecoder")).get(decoder);
+			} catch (NoSuchFieldException | IllegalAccessException exception) {
+				throw Throwables.propagate(exception);
+			}
+		}
+
+		return (WrappedDecoder) decoder;
 	}
 
 	public static WrappedEncoder getEncoder(ChannelPipeline pipeline) {

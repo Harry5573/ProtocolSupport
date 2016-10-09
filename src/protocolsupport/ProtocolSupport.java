@@ -16,6 +16,8 @@ import protocolsupport.utils.netty.Compressor;
 
 public class ProtocolSupport extends JavaPlugin {
 
+	public static boolean lilypad;
+
 	@Override
 	public void onLoad() {
 		try {
@@ -35,6 +37,9 @@ public class ProtocolSupport extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		if (ProtocolSupport.lilypad = this.getServer().getPluginManager().isPluginEnabled("LilyPad-Connect")) {
+			this.getLogger().info("Adding support for LilyPad.");
+		}
 		getCommand("protocolsupport").setExecutor(new CommandHandler());
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 	}

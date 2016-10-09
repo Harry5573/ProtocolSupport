@@ -80,7 +80,7 @@ public abstract class AbstractLoginListener extends net.minecraft.server.v1_8_R3
 	public AbstractLoginListener(final NetworkManager networkmanager) {
 		super(MinecraftServer.getServer(), networkmanager);
 		random.nextBytes(randomBytes);
-		isOnlineMode = MinecraftServer.getServer().getOnlineMode() && !networkManager.c();
+		isOnlineMode = MinecraftServer.getServer().getOnlineMode() && !networkManager.c() && !ProtocolSupport.lilypad;
 		useOnlineModeUUID = isOnlineMode;
 		forcedUUID = null;
 	}

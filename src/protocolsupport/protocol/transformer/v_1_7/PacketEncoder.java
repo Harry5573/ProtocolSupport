@@ -187,7 +187,7 @@ public class PacketEncoder implements IPacketEncoder {
 	}
 
 	private final LocalStorage storage = new LocalStorage();
-	private final PacketDataSerializer serverdata = new PacketDataSerializer(Unpooled.buffer(), ProtocolVersion.getLatest());
+	private final PacketDataSerializer serverdata = new PacketDataSerializer(Unpooled.buffer(), ProtocolVersion.getLatest(), true);
 
 	@Override
 	public void encode(ChannelHandlerContext ctx, Packet<PacketListener> packet, ByteBuf output) throws Exception {

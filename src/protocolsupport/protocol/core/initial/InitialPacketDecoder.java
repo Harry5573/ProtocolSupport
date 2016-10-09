@@ -1,5 +1,6 @@
 package protocolsupport.protocol.core.initial;
 
+import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.concurrent.TimeUnit;
@@ -146,11 +147,16 @@ public class InitialPacketDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 		if (MinecraftServer.getServer().isDebugging()) {
 			System.out.println(ChannelUtils.getNetworkManagerSocketAddress(channel)+ " connected with protocol version "+version);
 		}
-		ProtocolStorage.setProtocolVersion(ChannelUtils.getNetworkManagerSocketAddress(channel), version);
+		SocketAddress address = ChannelUtils.getNetworkManagerSocketAddress(channel);
+		ProtocolStorage.setProtocolVersion(address, version);
 		channel.pipeline().remove(ChannelHandlers.INITIAL_DECODER);
 		pipelineBuilders.get(version).buildPipeLine(channel, version);
 		receivedData.readerIndex(0);
 		channel.pipeline().firstContext().fireChannelRead(receivedData);
+		if (ProtocolSupport.lilypad) {
+			ProtocolStorage.setProtocolVersion(ChannelUtils.getNetworkManagerSocketAddress(channel), version);
+			ProtocolStorage.clearData(address);
+		}
 	}
 
 	private static ProtocolVersion attemptDecodeNettyHandshake(ByteBuf bytebuf) {

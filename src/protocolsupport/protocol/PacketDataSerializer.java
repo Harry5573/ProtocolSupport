@@ -46,10 +46,16 @@ import protocolsupport.utils.netty.ChannelUtils;
 public class PacketDataSerializer extends net.minecraft.server.v1_8_R3.PacketDataSerializer {
 
 	private ProtocolVersion version;
+	private boolean serverdata;
 
 	public PacketDataSerializer(ByteBuf buf, ProtocolVersion version) {
+		this(buf, version, false);
+	}
+
+	public PacketDataSerializer(ByteBuf buf, ProtocolVersion version, boolean serverdata) {
 		this(buf);
 		this.version = version;
+		this.serverdata = serverdata;
 	}
 
 	public ProtocolVersion getVersion() {
@@ -213,7 +219,7 @@ public class PacketDataSerializer extends net.minecraft.server.v1_8_R3.PacketDat
 			readBytes(array);
 			return array;
 		} else {
-			return super.a();
+			return super.readByteArray(this.serverdata ? Integer.MAX_VALUE : Short.MAX_VALUE);
 		}
 	}
 
